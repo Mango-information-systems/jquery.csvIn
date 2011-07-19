@@ -1,60 +1,43 @@
 /* Set of functions to process csv data in jquery
 
 Features and usage:
-  1. simple processing
-    var myArray = jQuery.csvIn.toArray (csvText);						// convert csv text to array using default options
-    var myObject = jQuery.csvIn.toJSON (csvText);						// convert csv text to JSON object using default options
-  2. processing using custom settings
-	You can define your own settings for the parsing of the csv.
-	examples:
-  	  var myArray = jQuery.csvIn.toArray( csvText, {quote:"'"});				// convert csv text to array using single quote as the quote marker (default is double quote)
-  	  var myArray = jQuery.csvIn.toArray( csvText, {quote:"'\""});				// convert csv text to array using both single and double quote as quote markers
-	  var myArray = jQuery.csvIn.toArray( tsvText, {delim:"\t", quote:"'"});	// convert tsv text to array using tab as column delimitor and single quote as the quote marker
-	Following options are available:
-	  * delim: column delimitor, comma by default,
-	  * quote: quote marker, double quote by default,
-	  * lined: row delimitor, \r\n by default,
-	  * startLine: first line to return, 0 by default,
-	  * endLine: last line to return, -1 by default (extract until last line when -1),
-	  * excludedColumns: list of columns which should not be returned, empty array by default (returns all columns)
-  3. delimitor detection
-    the plugin can automatically detect the delimitor, using this syntax:
-	  var options = {};
-      options.delim =  jQuery.csvIn.detectDelimitor (csvText);		// detect delimitor for the csv text
-	  var myArray = jQuery.csvIn.toArray( csvText, options);
-	it is recommended to use this feature only to guess the delimitor, and have it confirmed by the software user
-  4. guess presence of header row
-	var myArray = jQuery.csvIn.toArray( csvText, options);				// convert csv text to array using user-defined options
-    var headerCheck = jQuery.csvIn.isHeader ( myArray[0]);				// returns true in case first row might be a header row
-  5. filter rows and columns)
-    You can extract only subset of the rows, otherwise exclude columns you are not interested in
-	example:
-	  var options = {};	
-	  options.startLine = 1;
-	  options.endLine = 20;
-	  var myArray = jQuery.csvIn.toArray( csvText, options);			// convert only rows 1 to 20 of the csv text to array.
-	You can also specify the columns that you want to skip
-	example:
-	  var myArray = jQuery.csvIn.toArray( csvText, {excludedColumns : [1]});				// second column of the csv file will be ignored, all other columns will be returned
-  6. Override default settings
-    you can override the default options.
-	Example:
-      $.fn.csvIn.defaults.delim ="\t";									// override default delimitor setting to tab instead of comma
-      var myArray = jQuery.csvIn.toArray( csvText);						// convert csv text to array using tab as column delimitor
-    Note: this needs only to be called once and does not have to be called from within a 'ready' block
+1. Available functions
+    1.1 `cvIn.toArray (data, options)` converts csv file into two-dimensional array
+    1.2 `cvIn.toJSON (data, options)` converts csv file into array of JSON objects
+    1.3 `cvIn.detectDelimitor (data, options)` attempts to determine the delimitor used in the csv file (evaluating six candidates: comma, tab, semicolon, colon, hyphen and space)
+    1.4 `cvIn.isHeader (firstRow)` guesses whether the first row is a header or not. firstRow must be the first element returned by `cvIn.toArray`
 
-Performance
-  When parsing large csv files data, use startLine and endLine if you need only to get a subset of the records, this will speed-up the processing.
-  Excluding columns adds an overhead to the processing.
-  You might speed up loading in case there is no quote with this option: options.quote = 0; // Use with care: there might be quotes
+2. Options
 
-Copyright
-csvIn is licensed under Apache license version 2.0
+    You can specify options using object literal notation. You can combine any of the available options for the function you are using. In case you do not specify some options, their default values will be used.
+    Options for `cvIn.toArray`:
+    * `delim`: column delimitor, comma by default,
+    * `quote`: quote marker, double quote by default,
+    * `lined`: row delimitor, \r\n by default,
+    * `startLine`: first line to return, 0 by default,
+    * `endLine`: last line to return, -1 by default (extraction until last line),
+    * `excludedColumns`: list of columns which should not be returned, empty array by default (returns all columns).
+    `cvIn.toJSON` accepts same options than `cvIn.toArray` plus an extra: `customHeaders`, which should be an array of strings column titles. If not specified, the first row of the csv will be used for the column titles.
+    `cvIn.detectDelimitor` uses `quote` and `lined` options.
+    `cvIn.isHeader` function does not accept any option.
 
-csvIn code is based on jquery.csv plugin, licensed under Apache license version 2.0
-jquery.csv plugin home: http://code.google.com/p/js-tables/
-  
-  
+3. Overriding default options
+    You can override default options. Then any call to the functions without a second parameter will use the new default you have specified.
+    Example: override default delimitor setting to tab instead of comma
+    `$.csvIn.defaults.delim = "\t";`
+
+read here for documentation and examples: https://github.com/Mango-information-systems/jquery.csvIn/blob/master/README.md
+
+License and credits
+
+Copyright (c) 2011 Mango Information Systems SPRL, http://www.mango-is.com
+
+This plugin will either be released under dual license (MIT + LGPL) or under Apache license version 2.0. Precision will be added soon right here.
+
+csvIn code is based on [jquery.csv] plugin, licensed under Apache license version 2.0
+
+[jquery.csv]: http://code.google.com/p/js-tables/
+
 */
 
 
@@ -186,18 +169,6 @@ jquery.csv plugin home: http://code.google.com/p/js-tables/
 					simple_splitline(delimre)
 		];
 	}
-
-	// Returns the number of occurences of substring 'substr1' within string 'string1'
-	function count_substr(substr1, string1) {
-		var count = 0;
-		var substrLength = substr1.length;
-
-		for (var i=0; i < string1.length; i++) {
-			if (substr1 == string1.substr(i, substrLength))
-				count++;
-		}
-		return count;
-	}
 	
 	$.csvIn = {};
 
@@ -252,7 +223,7 @@ jquery.csv plugin home: http://code.google.com/p/js-tables/
 	// convert csv data to JSON format
 
 		// override default options with the ones defined by the user
-		options = $.extend($.csvIn.defaults, options);		
+		options = $.extend({}, $.csvIn.defaults, options);
 
 		// create appropriate regular expressions
 		var param = parse_param(options.delim, options.quote, options.lined),
@@ -264,18 +235,56 @@ jquery.csv plugin home: http://code.google.com/p/js-tables/
 		var lines = data.replace(trailing, '').split(linedre)  // split into lines
 
 		// set endLine value according to selected option and file length
-		if (options.endLine==-1)
+		if (options.endLine == -1)
 		// read file until the end
 			options.endLine = lines.length;
 		else
 		// get the lowest of endLine and total number of lines
 			options.endLine = lines.length>options.endLine?options.endLine:lines.length;
 
-		header = splitline(lines[0]);                      	// and get the first row (header)
-console.log(header);
+		// setting header, using custom one if defined
+		var header = options.customHeaders.length == 0 ? options.customHeaders : splitline(lines[0]);
+		
+		if (options.startLine == 0 && options.customHeaders.length == 0)
+		// set start line to 1 in case no custom header is defined
+			options.startLine=1;
+		
+
 		nfields = header.length;
 		out = [];                                           // put the results into this array
 
+		if (options.excludedColumns.length == 0) {
+		// return all csv columns (faster)
+			for (var i=options.startLine; i<options.endLine; i++) {
+				var line = splitline(lines[i]);                     // split each subsequent row
+				for (var j=0, result={}; j<nfields; j++) {          // and make it a hash of fields, using the header
+					result[header[j]] = line[j];
+				}
+				out.push(result);                                   // add the hash
+			}
+			return out;
+		}
+		else {
+		// return only columns not excluded
+			for (var i=options.startLine; i<options.endLine; i++) {
+				line = splitline(lines[i]);						// split each subsequent row
+				result = {};
+				for (var j=0; j<nfields; j++) {
+				// and make it a hash of fields, using the header
+					if ($.inArray(j,options.excludedColumns) == -1)
+					// check whether column is not excluded
+						result[header[j]] = line[j];
+				}
+				out.push(result);                                   // add the hash
+			}
+		return out;
+		}
+		
+		
+		
+		
+
+/*
 		for (var i=options.startLine; i<options.endLine; i++) {
 			var line = splitline(lines[i]);                     // split each subsequent row
 			for (var j=0, result={}; j<nfields; j++) {          // and make it a hash of fields, using the header
@@ -284,6 +293,9 @@ console.log(header);
 			out.push(result);                                   // add the hash
 		}
 		return out;
+*/
+
+
 	};
 
 	$.csvIn.isHeader = function( firstRow) {
@@ -316,44 +328,47 @@ console.log(header);
 		return true;
 	};
 
-	$.csvIn.detectDelimitor = function( rows ) {
+	$.csvIn.detectDelimitor = function( data, options ) {
 	// guess csv file delimitor.
 	// returns the delimitor detected: "space", "comma", "colon", "semicolon", "hyphen", "tab" or an empty string otherwise
-	// "rows" should be a subset of the parsed csv
+	// "data" should be either the full csv string or a subset of it, containing at least several lines.
 	// inspired by php example from http://stackoverflow.com/questions/761932/how-should-i-detect-which-delimiter-is-used-in-a-text-file
-	// this function assumes that the row separator is \r\n
 
-// todo: replace line parsing by $.csvIn.toArray ?
-// or at least check split function cross-browser compatibility
 		// candidates store the standard delimitors to check
 		var candidates = [";", ",", "\t", "-", ":", " "];
-		
-		// select first rows
-		rows = rows.split('\r\n');
 
-// todo: limitedRows is not needed, just adapt the j indexed loop below to get rid of it
-		// limitedRows stores the rows that have to be checked
-		var limitedRows = [];
-		
-		// 7 first rows will be scanned, unless file is smaller
-		lastRow = Math.min(7,rows.length);
+		// override default options with the ones defined by the user
+		options = $.extend({}, $.csvIn.defaults, options);
 
-		for (i =0;i<lastRow;i++) {
-		// store rows to check
-			limitedRows.push(rows[i]);
-		}
+		// create appropriate regular expressions
+		var param = parse_param(options.delim, options.quote, options.lined),
+			trailing  = param[0],
+			linedre   = param[1],
+			splitline = param[2];
+		// Split into lines, and then call splitline repeatedly.
+		var lines = data.replace(trailing, '').split(linedre);
+
+		// 7 first lines will be scanned, unless file is smaller
+		lastRow = Math.min(7,lines.length);
 
 		for (i in candidates) {
 		// perform the check in each candidate
 			var previousCount=0;
 			var candidateCheck = true
-			for (j in limitedRows) {
-				if (limitedRows[j].length <2)
-				// skip irrelevant limitedRows
+			for (j =0; j < lastRow; j++) {
+				if (lines[j].length <2)
+				// skip irrelevant lines
 					break;
-				currentCount = count_substr(candidates[i], limitedRows[j]);
+				// reset splitline function using current candidate			
+				options.delim = candidates[i];
+				param = parse_param(options.delim, options.quote, options.lined);
+				trailing  = param[0];
+				linedre   = param[1];
+				splitline = param[2];
+				// count number of columns using current delimitor
+				currentCount = splitline(lines[j]).length;
 
-				if ( currentCount==0 || (currentCount != previousCount) && previousCount !=0) {
+				if ( currentCount <= 1 || (currentCount != previousCount) && previousCount !=0) {
 				// number of colums differs between lines for this candidate delimitor
 				// this is not the delimitor of the file
 					candidateCheck = false;
@@ -362,27 +377,8 @@ console.log(header);
 				previousCount = currentCount;
 			}
 			if(candidateCheck) {
-			// return name of delimitor in case tested one is valid (same column count for the seven rows using this delimitor)
-				switch(candidates[i]) {
-					case " ":
-						return "space";
-					break;
-					case ",":
-						return "comma";
-					break;
-					case ":":
-						return "colon";
-					break;
-					case ";":
-						return "semicolon";
-					break;
-					case "-":
-						return "hyphen";
-					break;
-					case "\t":
-						return "tab";
-					break;
-				}
+			// return name of delimitor in case tested one is valid (same column count for the seven lines using this delimitor)
+				return candidates[i];
 			}
 		}
 		return "";		
@@ -395,7 +391,8 @@ console.log(header);
 		lined: '\r\n',      // line delimiter is \r or \n or both
 		startLine: 0,		// first line to read, 0 by default
 		endLine: -1,		// last line to read, -1 by default - then whole file read
-		excludedColumns: [] // no column is excluded by default
+		excludedColumns: [], // no column is excluded by default
+		customHeaders: []    // no custom header is defined by default
 	};
 
 })(jQuery);
