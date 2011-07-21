@@ -243,8 +243,8 @@ csvIn code is based on [jquery.csv] plugin, licensed under Apache license versio
 			options.endLine = lines.length>options.endLine?options.endLine:lines.length;
 
 		// setting header, using custom one if defined
-		var header = options.customHeaders.length == 0 ? options.customHeaders : splitline(lines[0]);
-		
+		var header = options.customHeaders.length == 0 ? splitline(lines[0]): options.customHeaders;
+
 		if (options.startLine == 0 && options.customHeaders.length == 0)
 		// set start line to 1 in case no custom header is defined
 			options.startLine=1;
@@ -265,7 +265,7 @@ csvIn code is based on [jquery.csv] plugin, licensed under Apache license versio
 			return out;
 		}
 		else {
-		// return only columns not excluded
+		// check to exclude columns
 			for (var i=options.startLine; i<options.endLine; i++) {
 				line = splitline(lines[i]);						// split each subsequent row
 				result = {};
