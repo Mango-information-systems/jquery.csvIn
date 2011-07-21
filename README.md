@@ -22,24 +22,24 @@ It is based on [jquery.csv] plugin and extend its functionalities.
 
     using default options
     
-````javascript
-$.csvIn.toArray('1,2,3\n4,5,6\n7,8,9\n');
-// returns [ ["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"] ]
-````
+    ````javascript
+    $.csvIn.toArray('1,2,3\n4,5,6\n7,8,9\n');
+    // returns [ ["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"] ]
+    ````
     
     it handles quotes
     
-````javascript
-$.csvIn.toArray('a,"b,c",d');
-// returns [ ['a', 'b,c', 'd'] ]
-````
+    ````javascript
+    $.csvIn.toArray('a,"b,c",d');
+    // returns [ ['a', 'b,c', 'd'] ]
+    ````
 
     specify csv settings, eg tab as column delimitor:
     
-````javascript
-$.csvIn.toArray('1\t2\n3\t4', {delim:"\t"});
-// returns [ ["1", "2"], ["3", "4"] ]
-````
+    ````javascript
+    $.csvIn.toArray('1\t2\n3\t4', {delim:"\t"});
+    // returns [ ["1", "2"], ["3", "4"] ]
+    ````
         
     for full list of settings refer to the section "Usage/Options" below
 
@@ -47,29 +47,29 @@ $.csvIn.toArray('1\t2\n3\t4', {delim:"\t"});
 
     using default settings
     
-````javascript
-$.csvIn.toJSON('col1, col2, col3\n1,2,3\n4,5,6\n7,8,9\n');
-/* returns:
-[
-{ "col1": "1", " col2": "2", " col3": "3" },
-{ "col1": "4", " col2": "5", " col3": "6" },
-{ "col1": "7", " col2": "8", " col3": "9" }
-]
-*/
-````
+    ````javascript
+    $.csvIn.toJSON('col1, col2, col3\n1,2,3\n4,5,6\n7,8,9\n');
+    /* returns:
+    [
+    { "col1": "1", " col2": "2", " col3": "3" },
+    { "col1": "4", " col2": "5", " col3": "6" },
+    { "col1": "7", " col2": "8", " col3": "9" }
+    ]
+    */
+    ````
     
     specifying your own column headers
     
-````javascript
-$.csvIn.toJSON('cars,200\nplanes,175\nbikes,500\n', {"customHeaders":["products","sales"]});
-/* returns
-[
-{ "products": "cars", "sales": "200" },
-{ "products": "planes", "sales": "175" },
-{ "products": "bikes", "sales": "500" }
-]
-*/
-````
+    ````javascript
+    $.csvIn.toJSON('cars,200\nplanes,175\nbikes,500\n', {"customHeaders":["products","sales"]});
+    /* returns
+    [
+    { "products": "cars", "sales": "200" },
+    { "products": "planes", "sales": "175" },
+    { "products": "bikes", "sales": "500" }
+    ]
+    */
+    ````
     
     you can use same custom options as in $csvIn.toArray
 
@@ -77,64 +77,64 @@ $.csvIn.toJSON('cars,200\nplanes,175\nbikes,500\n', {"customHeaders":["products"
         
     Extract only first two rows, and first two columns
     
-````javascript
-$.csvIn.toArray('1,2,3\n4,5,6\n7,8,9\n', {endLine:2,excludedColumns:[2]});
-// returns [ ["1", "2"], ["4", "5"] ]
-````
+    ````javascript
+    $.csvIn.toArray('1,2,3\n4,5,6\n7,8,9\n', {endLine:2,excludedColumns:[2]});
+    // returns [ ["1", "2"], ["4", "5"] ]
+    ````
 
 4. Detect column delimitor
 
     Call the `detectedDelimitor` function to find the column delimitor of a csv file
     
-````javascript
-var detectedDelimitor = jQuery.csvIn.detectDelimitor ('1,2,3\n4,5,6\n7,8,9\n');
-// returns ","
-````
+    ````javascript
+    var detectedDelimitor = jQuery.csvIn.detectDelimitor ('1,2,3\n4,5,6\n7,8,9\n');
+    // returns ","
+    ````
 
     Confident use - only if you are sure that your files contain only one delimitor and are well structured:
 
-````javascript
-// 1. detect the delimitor
-var detectedDelimitor = jQuery.csvIn.detectDelimitor (csvText);
-// 2. convert the file
-var myArray = jQuery.csvIn.toArray( csvText, {"delim":detectedDelimitor});
-````
+    ````javascript
+    // 1. detect the delimitor
+    var detectedDelimitor = jQuery.csvIn.detectDelimitor (csvText);
+    // 2. convert the file
+    var myArray = jQuery.csvIn.toArray( csvText, {"delim":detectedDelimitor});
+    ````
         
     Safer use:
 
-````javascript
-// 1. detect the delimitor
-var detectedDelimitor = jQuery.csvIn.detectDelimitor (csvText);
-// 2. convert a part of your file to preview to the user
-var myPreview = jQuery.csvIn.toArray( csvText, {"delim":detectedDelimitor, "endLine":5});
-// 3. display preview of the file to the user, and let him confirm the delimitor choice
-//your own code here, where you might update the variable detectedDelimitor
-// 4. convert the whole file with the confirmed delimitor
-var myArray = jQuery.csvIn.toArray( csvText, {"delim":detectedDelimitor});
-````
+    ````javascript
+    // 1. detect the delimitor
+    var detectedDelimitor = jQuery.csvIn.detectDelimitor (csvText);
+    // 2. convert a part of your file to preview to the user
+    var myPreview = jQuery.csvIn.toArray( csvText, {"delim":detectedDelimitor, "endLine":5});
+    // 3. display preview of the file to the user, and let him confirm the delimitor choice
+    //your own code here, where you might update the variable detectedDelimitor
+    // 4. convert the whole file with the confirmed delimitor
+    var myArray = jQuery.csvIn.toArray( csvText, {"delim":detectedDelimitor});
+    ````
 
 5. Guess the presence of a header
 
     pass in the first row of array to guess whether it is a header 
 
-````javascript
-var headerCheck = jQuery.csvIn.isHeader( ["manufacturer","year", "productCount"]);
-// returns true
+    ````javascript
+    var headerCheck = jQuery.csvIn.isHeader( ["manufacturer","year", "productCount"]);
+    // returns true
 
-var headerCheck = jQuery.csvIn.isHeader( ["Someone","2009","500"]);
-// returns false
-````
+    var headerCheck = jQuery.csvIn.isHeader( ["Someone","2009","500"]);
+    // returns false
+    ````
       
     this feature should be used with care, we recommend to ask confirmation to the user.
 
-````javascript
-// 1. convert the file to an Array
-var myArray = jQuery.csvIn.toArray( csvText );
-// 2. Guess  whether the first row is a header
-var headerCheck = jQuery.csvIn.isHeader( myArray[0]);
-// returns true or false
-// 3. show converted data to the user and make him confirm whether the first row is actually a header
-````
+    ````javascript
+    // 1. convert the file to an Array
+    var myArray = jQuery.csvIn.toArray( csvText );
+    // 2. Guess  whether the first row is a header
+    var headerCheck = jQuery.csvIn.isHeader( myArray[0]);
+    // returns true or false
+    // 3. show converted data to the user and make him confirm whether the first row is actually a header
+    ````
 
 ### Usage:
 
@@ -178,12 +178,12 @@ var headerCheck = jQuery.csvIn.isHeader( myArray[0]);
 
     Example: override default delimitor setting to tab instead of comma
 
-````javascript
-$.csvIn.defaults.delim = "\t";
-// Then the following convert tsv text to array using tab as column delimitor:
-var myArray = jQuery.csvIn.toArray( tsvText);
-// other default settings (quote, lined, ...) remain unchanged
-````
+    ````javascript
+    $.csvIn.defaults.delim = "\t";
+    // Then the following convert tsv text to array using tab as column delimitor:
+    var myArray = jQuery.csvIn.toArray( tsvText);
+    // other default settings (quote, lined, ...) remain unchanged
+    ````
         
     N.B.: Call this only once at the beginning of your javascript.
 
@@ -207,9 +207,9 @@ Install as a regular jQuery plugin:
 
 3. Add a reference to the script in your html:
 
-````html
-<script type="text/javascript" src="/js/jquery.csvIn.min.js"></script>
-````
+    ````html
+    <script type="text/javascript" src="/js/jquery.csvIn.min.js"></script>
+    ````
 
 4. Use the functions in your javascript
 
