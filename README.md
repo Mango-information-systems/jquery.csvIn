@@ -78,7 +78,7 @@ It is based on [jquery.csv] plugin and extend its functionalities.
     Extract only first two rows, and first two columns
     
     ````javascript
-    $.csvIn.toArray('1,2,3\n4,5,6\n7,8,9\n', {endLine:2,excludedColumns:[2]});
+    $.csvIn.toArray('1,2,3\n4,5,6\n7,8,9\n', {endLine:1,excludedColumns:[2]});
     // returns [ ["1", "2"], ["4", "5"] ]
     ````
 
