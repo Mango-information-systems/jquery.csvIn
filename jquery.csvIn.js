@@ -28,6 +28,8 @@ Features and usage:
 
 read here for documentation and examples: https://github.com/Mango-information-systems/jquery.csvIn/blob/master/README.md
 
+Version 0.2 - 31st July 2011
+
 License and credits
 
 Copyright (c) 2011 Mango Information Systems SPRL, http://www.mango-is.com
@@ -193,21 +195,20 @@ csvIn code is based on [jquery.csv] plugin, licensed under Apache license versio
 		// set endLine value according to selected option and file length
 		if (options.endLine == -1)
 		// read file until the end
-			options.endLine = lines.length;
+			options.endLine = lines.length-1;
 		else
 		// get the lowest of endLine and total number of lines
-			options.endLine = lines.length>options.endLine?options.endLine:lines.length;
-
+			options.endLine = lines.length>options.endLine?options.endLine:lines.length-1;
+			
 		if (options.excludedColumns.length == 0) {
 		// return all csv columns (faster)
-
-			for (var i=options.startLine; i<options.endLine; i++) {
+			for (var i=options.startLine; i<=options.endLine; i++) {
 				result.push(splitline(lines[i]));
 			}
 		}
 		else {
 		// return only columns not excluded
-			for (var i=options.startLine; i<options.endLine; i++) {
+			for (var i=options.startLine; i<=options.endLine; i++) {
 				split = splitline(lines[i]);
 				for (j in options.excludedColumns) {
 					split.splice(options.excludedColumns[j],1)
@@ -237,10 +238,10 @@ csvIn code is based on [jquery.csv] plugin, licensed under Apache license versio
 		// set endLine value according to selected option and file length
 		if (options.endLine == -1)
 		// read file until the end
-			options.endLine = lines.length;
+			options.endLine = lines.length-1;
 		else
 		// get the lowest of endLine and total number of lines
-			options.endLine = lines.length>options.endLine?options.endLine:lines.length;
+			options.endLine = lines.length>options.endLine?options.endLine:lines.length-1;
 
 		// setting header, using custom one if defined
 		var header = options.customHeaders.length == 0 ? splitline(lines[0]): options.customHeaders;
@@ -255,7 +256,7 @@ csvIn code is based on [jquery.csv] plugin, licensed under Apache license versio
 
 		if (options.excludedColumns.length == 0) {
 		// return all csv columns (faster)
-			for (var i=options.startLine; i<options.endLine; i++) {
+			for (var i=options.startLine; i<=options.endLine; i++) {
 				var line = splitline(lines[i]);                     // split each subsequent row
 				for (var j=0, result={}; j<nfields; j++) {          // and make it a hash of fields, using the header
 					result[header[j]] = line[j];
@@ -266,7 +267,7 @@ csvIn code is based on [jquery.csv] plugin, licensed under Apache license versio
 		}
 		else {
 		// check to exclude columns
-			for (var i=options.startLine; i<options.endLine; i++) {
+			for (var i=options.startLine; i<=options.endLine; i++) {
 				line = splitline(lines[i]);						// split each subsequent row
 				result = {};
 				for (var j=0; j<nfields; j++) {
@@ -279,11 +280,6 @@ csvIn code is based on [jquery.csv] plugin, licensed under Apache license versio
 			}
 		return out;
 		}
-		
-		
-		
-		
-
 /*
 		for (var i=options.startLine; i<options.endLine; i++) {
 			var line = splitline(lines[i]);                     // split each subsequent row
