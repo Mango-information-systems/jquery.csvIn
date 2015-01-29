@@ -1,5 +1,7 @@
 ## csvIn: jQuery plugin to process csv input
 
+**Disclaimer**: This code is not maintained anymore and has not been tested with more recent versions of jQuery. You may want to use another CSV parser, like [papaParse](https://github.com/mholt/PapaParse). 
+
 jquery.csvIn processes csv data in javascript. It is especially useful to deal with input files at client side in HTML5 applications.
 
 It is based on [jquery.csv] plugin and extend its functionalities.
